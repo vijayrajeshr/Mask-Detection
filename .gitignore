@@ -1,0 +1,18 @@
+__pycache__/
+*.py[cod]
+*$py.class
+.env
+.venv
+env/
+venv/
+ENV/
+.vscode/
+.idea/
+
+# Large binaries (downloaded via setup_project.py)
+# mask_detector.h5
+# haarcascade_frontalface_default.xml
+
+# If you prefer to push models to git, comment the lines below:
+# mask_detector.h5
+# *.xml
