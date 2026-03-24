@@ -19,7 +19,7 @@ class MaskClassifier:
             self.model = None
         else:
             # We load the model once to avoid re-initializing the prediction session
-            self.model = load_model(model_path)
+            self.model = load_model(model_path, compile=False)
 
     def predict(self, face_image):
         """

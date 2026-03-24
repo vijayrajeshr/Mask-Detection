@@ -20,39 +20,42 @@ def run_webcam(model_path="mask_detector.h5", confidence_threshold=50):
     # Allow camera sensor to warm up
     time.sleep(2.0)
 
-    while True:
-        # Read frame from stream
-        ret, frame = vs.read()
-        if not ret:
-            print("[ERROR] Failed to read frame from webcam.")
-            break
+    try:
+        while True:
+            # Read frame from stream
+            ret, frame = vs.read()
+            if not ret:
+                print("[ERROR] Failed to read frame from webcam.")
+                break
 
-        # Detect faces in frame
-        faces = detector.detect_faces(frame)
+            # Detect faces in frame
+            faces = detector.detect_faces(frame)
 
-        # Iterate over each face
-        for (x, y, w, h) in faces:
-            # Crop face for classification
-            face_img = preprocess_face(frame, (x, y, w, h))
-            
-            # Predict mask/no mask
-            label, confidence = classifier.predict(face_img)
+            # Iterate over each face
+            for (x, y, w, h) in faces:
+                # Crop face for classification
+                face_img = preprocess_face(frame, (x, y, w, h))
+                
+                # Predict mask/no mask
+                label, confidence = classifier.predict(face_img)
 
-            # Draw prediction result on frame
-            frame = draw_prediction(frame, (x, y, w, h), label, confidence, threshold=confidence_threshold)
+                # Draw prediction result on frame
+                frame = draw_prediction(frame, (x, y, w, h), label, confidence, threshold=confidence_threshold)
 
-        # Show the output frame
-        cv2.imshow("Mask Detection System", frame)
+            # Show the output frame
+            cv2.imshow("Mask Detection System", frame)
 
-        # Check for 'q' key to quit
-        key = cv2.waitKey(1) & 0xFF
-        if key == ord("q"):
-            break
-
-    # Clean up
-    print("[INFO] Stopping system...")
-    cv2.destroyAllWindows()
-    vs.release()
+            # Check for 'q' key to quit
+            key = cv2.waitKey(1) & 0xFF
+            if key == ord("q"):
+                break
+    except KeyboardInterrupt:
+        print("\n[INFO] Interrupt received. Stopping system...")
+    finally:
+        # Clean up resources
+        print("[INFO] Releasing resources...")
+        cv2.destroyAllWindows()
+        vs.release()
 
 if __name__ == "__main__":
     # Add command line arguments for configurability
