@@ -53,7 +53,7 @@ python main.py --confidence 60.0 --model mask_detector.h5
 ```
 
 ## Usage Controls
-- Press **'q'** on your keyboard to exit the application window.
+- Press **'Q'** on your keyboard to exit the application window.
 
 ## License
 MIT License
