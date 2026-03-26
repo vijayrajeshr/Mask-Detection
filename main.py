@@ -7,9 +7,7 @@ from classify import MaskClassifier
 from utils import draw_prediction, preprocess_face
 
 def run_webcam(model_path="mask_detector.h5", confidence_threshold=50):
-    """
-    Main loop for webcam processing.
-    """
+    
     print("[INFO] Starting video stream...")
     vs = cv2.VideoCapture(0) # Standard webcam
     

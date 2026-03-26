@@ -1,14 +1,7 @@
 import cv2
 
 def draw_prediction(frame, face_coords, label, confidence, threshold=50):
-    """
-    Draw a rectangle and label on the frame.
-    frame: BGR image
-    face_coords: (x, y, w, h)
-    label: "Mask" or "No Mask"
-    confidence: float percentage
-    threshold: Ignore predictions below this confidence
-    """
+    
     if confidence < threshold:
         return frame
 
@@ -29,9 +22,7 @@ def draw_prediction(frame, face_coords, label, confidence, threshold=50):
     return frame
 
 def preprocess_face(frame, face_coords):
-    """
-    Crop face from frame given (x, y, w, h).
-    """
+    
     x, y, w, h = face_coords
     # Ensure cropping doesn't go out of bounds
     startX = max(0, x)

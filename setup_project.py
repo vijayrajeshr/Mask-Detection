@@ -1,7 +1,7 @@
 import urllib.request
 import os
 
-# URLs for required assets
+
 # Haar Cascade for face detection
 HAAR_CASCADE_URL = "https://raw.githubusercontent.com/opencv/opencv/master/data/haarcascades/haarcascade_frontalface_default.xml"
 # Lightweight Mask Detection Model
