@@ -2,66 +2,67 @@ import cv2
 import time
 import os
 import argparse
+# Import my other files
 from detect import FaceDetector
 from classify import MaskClassifier
 from utils import draw_prediction, preprocess_face
 
-def run_webcam(model_path="mask_detector.h5", confidence_threshold=50):
+def run_mask_detection(model_path="mask_detector.h5", confidence_threshold=50):
     
-    print("[INFO] Starting video stream...")
-    vs = cv2.VideoCapture(0) # Standard webcam
+    print("Starting the video stream... Please wait")
+    # 0 is usually the default webcam
+    cap = cv2.VideoCapture(0) 
     
-    # Initialize detector and classifier
-    detector = FaceDetector()
-    classifier = MaskClassifier(model_path=model_path)
+    # Load my detector and classifier classes
+    face_detector = FaceDetector()
+    mask_classifier = MaskClassifier(model_path=model_path)
     
-    # Allow camera sensor to warm up
+    # Give the camera some time to start
     time.sleep(2.0)
 
     try:
         while True:
-            # Read frame from stream
-            ret, frame = vs.read()
+            # Get the next frame
+            ret, frame = cap.read()
             if not ret:
-                print("[ERROR] Failed to read frame from webcam.")
+                print("Error: Could not read from webcam.")
                 break
 
-            # Detect faces in frame
-            faces = detector.detect_faces(frame)
+            # Find faces in the current frame
+            faces = face_detector.detect_faces(frame)
 
-            # Iterate over each face
+            # Check each face found
             for (x, y, w, h) in faces:
-                # Crop face for classification
+                # Get the face part and resize it for the model
                 face_img = preprocess_face(frame, (x, y, w, h))
                 
-                # Predict mask/no mask
-                label, confidence = classifier.predict(face_img)
+                # Predict if they have a mask or not
+                label, confidence = mask_classifier.predict(face_img)
 
-                # Draw prediction result on frame
+                # Draw the box and label on the screen
                 frame = draw_prediction(frame, (x, y, w, h), label, confidence, threshold=confidence_threshold)
 
-            # Show the output frame
+            # Display the result
             cv2.imshow("Mask Detection System", frame)
 
-            # Check for 'q' key to quit
-            key = cv2.waitKey(1) & 0xFF
-            if key == ord("q"):
+            # Press 'q' to stop the program
+            if cv2.waitKey(1) & 0xFF == ord("q"):
                 break
-    except KeyboardInterrupt:
-        print("\n[INFO] Interrupt received. Stopping system...")
+
+    except Exception as e:
+        print(f"Something went wrong: {e}")
     finally:
-        # Clean up resources
-        print("[INFO] Releasing resources...")
+        # Stop everything and close windows
+        print("Closing the system...")
+        cap.release()
         cv2.destroyAllWindows()
-        vs.release()
 
 if __name__ == "__main__":
-    # Add command line arguments for configurability
+    # Setup some basic arguments so I can change settings from command line
     parser = argparse.ArgumentParser()
-    parser.add_argument("-m", "--model", type=str, default="mask_detector.h5",
-        help="path to trained face mask detector model")
-    parser.add_argument("-c", "--confidence", type=float, default=50.0,
-        help="minimum confidence threshold to filter weak detections")
-    args = vars(parser.parse_args())
+    parser.add_argument("--model", type=str, default="mask_detector.h5")
+    parser.add_argument("--conf", type=float, default=50.0)
+    args = parser.parse_args()
 
-    run_webcam(model_path=args["model"], confidence_threshold=args["confidence"])
+    run_mask_detection(model_path=args.model, confidence_threshold=args.conf)
+

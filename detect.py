@@ -1,47 +1,34 @@
 import cv2
 import os
 
+# This class handles finding faces in a frame
 class FaceDetector:
-    """
-    A class to handle face detection using OpenCV's Haar Cascade.
-    """
     def __init__(self, model_path=None):
-        """
-        Initializes the face detector with a Haar Cascade model.
-        Args:
-            model_path (str, optional): Path to the haarcascade_frontalface_default.xml file.
-                                       If None, it tries to load from the local directory or
-                                       OpenCV's default data folder.
-        """
-        # Use default OpenCV haar cascade if no path provided
+        # Default face model file
+        cascade_name = 'haarcascade_frontalface_default.xml'
+        
         if model_path is None:
-            # Check local directory first, then fallback to cv2 default
-            cascade_name = 'haarcascade_frontalface_default.xml'
+            # Check if we have the file in our folder
             if os.path.exists(cascade_name):
                 model_path = cascade_name
             else:
+                # Use the one that comes with opencv
                 model_path = cv2.data.haarcascades + cascade_name
         
         if not os.path.exists(model_path):
-            raise FileNotFoundError(f"Haar Cascade model not found at {model_path}")
+            print(f"Error: {model_path} not found!")
+            return
             
         self.face_cascade = cv2.CascadeClassifier(model_path)
 
     def detect_faces(self, frame):
-        """
-        Detects faces in a BGR frame using a grayscale conversion.
-        Args:
-            frame: The input image/frame from the webcam.
-        Returns:
-            list: A list of bounding boxes (x, y, w, h) for each detected face.
-        """
-        gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        # detectMultiScale parameters: 
-        # scaleFactor=1.1: Compensates for faces appearing smaller/larger.
-        # minNeighbors=5: Reduces false positives by requiring consensus.
-        # minSize=(30, 30): Minimum size of a detected face.
+        # Change to gray for better detection
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        
+        # Find the faces
+        # scaleFactor 1.1 and minNeighbors 5 are standard values I found online
         faces = self.face_cascade.detectMultiScale(
-            gray_frame, 
+            gray, 
             scaleFactor=1.1, 
             minNeighbors=5, 
             minSize=(30, 30)

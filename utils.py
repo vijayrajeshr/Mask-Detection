@@ -1,34 +1,40 @@
 import cv2
 
+# This function draws the box and the label on the frame
 def draw_prediction(frame, face_coords, label, confidence, threshold=50):
     
+    # Only show if we are sure enough
     if confidence < threshold:
         return frame
 
     x, y, w, h = face_coords
     
-    # Choose color based on label (Green for mask, Red for no mask)
-    color = (0, 255, 0) if label == "Mask" else (0, 0, 255)
+    # Green for yes, red for no
+    if label == "Mask":
+        color = (0, 255, 0)
+    else:
+        color = (0, 0, 255)
     
-    # Draw rectangle around face
+    # Draw the rectangle
     cv2.rectangle(frame, (x, y), (x + w, y + h), color, 2)
     
-    # Prepare text for label and confidence
+    # Put the text on top
     text = f"{label}: {confidence:.2f}%"
-    
-    # Draw label background
     cv2.putText(frame, text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.45, color, 2)
     
     return frame
 
-def preprocess_face(frame, face_coords):
+# This cuts the face out from the main frame
+def preprocess_face(frame, coords):
+    x, y, w, h = coords
     
-    x, y, w, h = face_coords
-    # Ensure cropping doesn't go out of bounds
-    startX = max(0, x)
-    startY = max(0, y)
-    endX = min(frame.shape[1], x + w)
-    endY = min(frame.shape[0], y + h)
+    # Make sure we stay within the image borders
+    x1 = max(0, x)
+    y1 = max(0, y)
+    x2 = min(frame.shape[1], x + w)
+    y2 = min(frame.shape[0], y + h)
 
-    face = frame[startY:endY, startX:endX]
+    # Crop it
+    face = frame[y1:y2, x1:x2]
     return face
+

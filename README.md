@@ -1,59 +1,46 @@
-# Real-Time Face Mask Detection System
+# Face Mask Detection Project
 
-A lightweight, real-time computer vision system that detects faces and classifies whether each person is wearing a mask or not.
+This is my project for detecting face masks in real-time. I used OpenCV to find faces and a deep learning model (TensorFlow) to check if the person is wearing a mask.
 
-## Features
-- **Face Detection:** Uses OpenCV's Haar Cascade for efficient, real-time face localization.
-- **Mask Classification:** Uses a pre-trained CNN model (MobileNetV2 based) to classify mask usage.
-- **Real-Time Visualization:** Draws bounding boxes (GREEN for Mask, RED for No Mask) with confidence scores.
-- **Modular Pipeline:** Cleanly separated modules for detection, classification, and utilities.
+## How it works
+1. **Face Detection:** I used Haar Cascades to find faces in the webcam feed.
+2. **Mask Classification:** Each face is cropped and sent to a CNN model (MobileNetV2) to predict if there is a mask.
+3. **Display:** I draw green boxes for masks and red boxes if no mask is found.
 
 ## Folder Structure
-```text
-Mask-Detection/
-├── main.py            # Entry point for webcam stream
-├── detect.py          # Face detection module
-├── classify.py        # Mask classification module
-├── utils.py           # Preprocessing and visualization utilities
-├── setup_project.py   # Script to download necessary pre-trained models
-├── requirements.txt   # Required Python libraries
-└── README.md          # Project documentation
-```
+- `main.py`: The main script to run the webcam.
+- `detect.py`: Code for finding faces.
+- `classify.py`: Code for predicting masks.
+- `utils.py`: Some extra functions for drawing and cropping.
+- `setup_project.py`: Run this first to download the models.
+- `requirements.txt`: Libraries needed (OpenCV, TensorFlow, etc).
 
-## Setup Instructions
+## How to run the project
 
-### 1. Prerequisites
-- Python 3.7+
-- A working webcam
-
-### 2. Environment Setup
-Clone the repository (if not already done) and install dependencies:
+### 1. Install libraries
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3. Model Downloads
-Run the following script to automatically download the pre-trained face and mask detector models:
+### 2. Download the models
+I didn't include the large model files in git, so run this to get them:
 ```bash
 python setup_project.py
 ```
-*Note: This will download `haarcascade_frontalface_default.xml` and `mask_detector.h5` into your project directory.*
 
-## Running the System
-
-To start the real-time detection via your webcam, simply run:
+### 3. Start the program
 ```bash
 python main.py
 ```
-
-### Optional Arguments
-You can customize the detection threshold or the model path using command line arguments:
+You can also change the confidence threshold:
 ```bash
-python main.py --confidence 60.0 --model mask_detector.h5
+python main.py --conf 60.0
 ```
 
-## Usage Controls
-- Press **'Q'** on your keyboard to exit the application window.
+## Challenges I faced
+- At first, the face detection was a bit slow, so I switched to grayscale.
+- Getting the image resizing right (224x224) was important because MobileNet is picky about input size.
+- Sometimes the lighting makes it hard to see the mask, but the model is pretty good!
 
 ## Author
 Vijay Rajesh R
